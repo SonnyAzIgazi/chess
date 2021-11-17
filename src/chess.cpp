@@ -3,6 +3,8 @@
 #include <math.h>
 #include <algorithm>
 
+
+
 Figure::Figure(int x, int y, char figureType, Uint8 color) {
 	SDL_Rect* rect = new SDL_Rect;
 	rect->x = x * 60;
@@ -12,6 +14,8 @@ Figure::Figure(int x, int y, char figureType, Uint8 color) {
 	this->figureType = figureType;
 	this->color = color;
 }
+
+std::vector<Figure* > Figure::figures;
 
 Figure* Figure::getFigureOnPosition(int x, int y) {
 	for (auto &figure : figures) {
