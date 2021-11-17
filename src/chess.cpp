@@ -11,6 +11,7 @@ Figure::Figure(int x, int y, char figureType, Uint8 color) {
 	rect->y = y * 60;
 	rect->h = 60;
 	rect->w = 60;
+	this->rect = rect;
 	this->figureType = figureType;
 	this->color = color;
 }
@@ -43,13 +44,18 @@ bool Figure::canMoveThere(int x, int y) {
 		int ownX = this->rect->x/60;
 		int ownY = this->rect->y/60;
 
-		if (getFigureOnPosition(x, y) != nullptr) {
-			if (std::abs(ownX - x) == 1 && ownY + 1 == y) {
-				return true;
+		Figure* figureThere = getFigureOnPosition(x, y);
+		if (figureThere != nullptr) {
+			if (figureThere->color != this->color) {
+				if (std::abs(ownX - x) == 1 && ownY + 1 == y) {
+					return true;
+				}
 			}
 		} else if (ownX == x && ownY + 1 == y) {
 			return true;
 		}
+	} else {
+		return true;
 	}
 	return false;
 }

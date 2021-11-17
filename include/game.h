@@ -18,8 +18,13 @@ private:
 
 	bool running = true;
 
+	Figure* inHand = nullptr;
+
 	void Render();
+
 	void EventHandling();
 	void KeyboardHandling(SDL_Event* event);
+	void OnClick(SDL_Event* event);
+
 	void generateFigures();
 };
