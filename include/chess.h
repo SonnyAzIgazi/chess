@@ -18,8 +18,8 @@ class Figure {
 		char figureType;
 		Uint8 color;
 
-		static Figure* getFigureOnPosition(int x, int y);
 		static std::vector<Figure*> figures;
+		static Figure* getFigureOnPosition(int x, int y);
 
 		Figure(int x, int y, char figureType, Uint8 color);
 		void move(int x, int y);
