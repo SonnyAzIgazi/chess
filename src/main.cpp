@@ -6,6 +6,5 @@
 int main() {
 	Game* game = new Game();
 	std::cout << game->status << std::endl;
-	
 	return 0;
 }
