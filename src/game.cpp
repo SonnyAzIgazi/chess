@@ -1,6 +1,7 @@
 #include "game.h"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_scancode.h>
 #include <cmath>
@@ -13,18 +14,18 @@
 
 Game::Game() {
 	if (SDL_Init(SDL_INIT_VIDEO) == 0) {
-		if (SDL_CreateWindowAndRenderer(WINDOW_SIZE+1, WINDOW_SIZE+1, 0, &window, &renderer) == 0) {
-			 SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+		if (SDL_CreateWindowAndRenderer(WINDOW_SIZE+1, WINDOW_SIZE+1, 0, &window, &this->renderer) == 0) {
+			SDL_SetRenderDrawBlendMode(this->renderer, SDL_BLENDMODE_BLEND);
 
-			generateFigures();
+			this->generateFigures();
 
 			while (running) {
 				this->Render();
 				this->EventHandling();
 			}
 		}
-		if (renderer) {
-			SDL_DestroyRenderer(renderer);
+		if (this->renderer) {
+			SDL_DestroyRenderer(this->renderer);
 		}
 		if (window) {
 			SDL_DestroyWindow(window);
@@ -34,48 +35,51 @@ Game::Game() {
 }
 
 void Game::Render() {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(renderer);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(this->renderer);
+	SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 	for (int x = 0; x <= 10; x++) {
-		SDL_RenderDrawLine(renderer, x*WINDOW_SIZE/10, 0, x*WINDOW_SIZE/10, WINDOW_SIZE);
+		SDL_RenderDrawLine(this->renderer, x*WINDOW_SIZE/10, 0, x*WINDOW_SIZE/10, WINDOW_SIZE);
 	}
 	for (int y = 0; y <= 10; y++) {
-		SDL_RenderDrawLine(renderer, 0, y*WINDOW_SIZE/10, WINDOW_SIZE, y*WINDOW_SIZE/10);
+		SDL_RenderDrawLine(this->renderer, 0, y*WINDOW_SIZE/10, WINDOW_SIZE, y*WINDOW_SIZE/10);
 	}
 
-	for (auto &figure : Figure::figures) {
-		if (inHand == figure) {
-			SDL_SetRenderDrawColor(renderer, figure->color, figure->color, figure->color, 100);
-			SDL_RenderFillRect(renderer, figure->rect);
+
+	int counter = 0;
+
+	for (Figure* &figure : Figure::figures) {
+		if (this->inHand == figure) {
+			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 100);
+			SDL_RenderFillRect(this->renderer, figure->rect);
 
 			int mX, mY;
 			SDL_GetMouseState(&mX, &mY);
 
-			SDL_SetRenderDrawColor(renderer, figure->color, figure->color, figure->color, 200);
+			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 200);
 			SDL_Rect rect = {
 				.x = mX-30,
 				.y = mY-30,
 				.w = 60,
 				.h = 60
 			};
-			SDL_RenderFillRect(renderer, &rect);
+			SDL_RenderFillRect(this->renderer, &rect);
 
 		} else {
-			SDL_SetRenderDrawColor(renderer, figure->color, figure->color, figure->color, 255);
-			SDL_RenderFillRect(renderer, figure->rect);
+			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 255);
+			SDL_RenderFillRect(this->renderer, figure->rect);
 		}
 	}
-	
-	SDL_SetRenderDrawColor(renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderPresent(renderer);
+
+	SDL_SetRenderDrawColor(this->renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderPresent(this->renderer);
 }
 
 void Game::OnClick(SDL_Event* event) {
 	int x = std::floor(event->button.x/60);
 	int y = std::floor(event->button.y/60);
 
-	
+
 
 	if (event->button.button == SDL_BUTTON_LEFT) {
 		if (event->button.state == SDL_PRESSED) {
@@ -90,7 +94,7 @@ void Game::OnClick(SDL_Event* event) {
 				inHand = nullptr;
 			}
 		}
-		
+
 	}
 }
 

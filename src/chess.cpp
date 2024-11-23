@@ -6,12 +6,12 @@
 
 
 Figure::Figure(int x, int y, char figureType, Uint8 color) {
-	SDL_Rect* rect = new SDL_Rect;
-	rect->x = x * 60;
-	rect->y = y * 60;
-	rect->h = 60;
-	rect->w = 60;
-	this->rect = rect;
+	this->rect = new SDL_Rect;
+	this->rect->x = x * 60;
+	this->rect->y = y * 60;
+	this->rect->h = 60;
+	this->rect->w = 60;
+
 	this->figureType = figureType;
 	this->color = color;
 }
