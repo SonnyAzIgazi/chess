@@ -1,19 +1,29 @@
 CC = g++
-CPPFLAGS = -I../include `sdl2-config --cflags --libs` -nostartfiles
+CPPFLAGS = -Iinclude `sdl2-config --cflags --libs`
 CFLAGS = -Wall -pthread
 LDLIBS = -lm -lpthread
 SRC = src
 OBJ = obj
-BIN = main
 MKDIR = mkdir -p
-SRCs := $(shell find $(SRC) -name "*.c")
-OBJs := $(subst $(SRC), $(OBJ), $(SRCs:.c=.o))
 
-all: $(BIN)
+# Find all .cpp files in SRC recursively
+SRCs := $(shell find $(SRC) -name "*.cpp")
 
-$(BIN): $(OBJs)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJs) -o $@ $(LDLIBS)
+# Map each .cpp file in SRC to a .o file in OBJ, preserving directory structure
+OBJs := $(patsubst $(SRC)/%, $(OBJ)/%, $(SRCs:.cpp=.o))
 
-$(OBJs): $(SRCs)
+# Build target: 'all' builds the final executable
+all: main.o
+
+# Link all object files into the final executable
+main.o: $(OBJs)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@ $(LDLIBS)
+
+# Rule to compile each .cpp file to a .o file
+$(OBJ)/%.o: $(SRC)/%.cpp
 	$(MKDIR) $(dir $@)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(subst $(OBJ), $(SRC), $(@:.o=.c)) -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+# Clean target to remove all generated files
+clean:
+	rm -rf $(OBJ) main.o
