@@ -1,9 +1,10 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
-#include <SDL2/SDL_scancode.h>
-#include "chess.h"
+//#include <SDL2/SDL_scancode.h>
 #include <vector>
+
+class Figure;
 
 class Game {
 
@@ -18,6 +19,7 @@ private:
 
 	bool running = true;
 
+	std::vector<std::vector<Figure*>> board;
 	Figure* inHand = nullptr;
 
 	void Render();

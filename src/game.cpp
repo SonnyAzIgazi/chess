@@ -1,4 +1,5 @@
 #include "game.h"
+#include "figure.h"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_rect.h>
@@ -17,6 +18,7 @@ Game::Game() {
 		if (SDL_CreateWindowAndRenderer(WINDOW_SIZE+1, WINDOW_SIZE+1, 0, &window, &this->renderer) == 0) {
 			SDL_SetRenderDrawBlendMode(this->renderer, SDL_BLENDMODE_BLEND);
 
+			this->board.resize(12, std::vector<Figure*>(12, nullptr));
 			this->generateFigures();
 
 			while (running) {
@@ -48,7 +50,14 @@ void Game::Render() {
 
 	int counter = 0;
 
-	for (Figure* &figure : Figure::figures) {
+	for (int x = 0; x < 12; x++) {
+		for (int y = 0; y < 12; y++) {
+			if (this->board[x][y] != nullptr) {
+				this->board[x][y]->render(this->renderer, x*60, y*60);
+			}
+		}
+	}
+		/*
 		if (this->inHand == figure) {
 			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 100);
 			SDL_RenderFillRect(this->renderer, figure->rect);
@@ -69,7 +78,7 @@ void Game::Render() {
 			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 255);
 			SDL_RenderFillRect(this->renderer, figure->rect);
 		}
-	}
+		*/
 
 	SDL_SetRenderDrawColor(this->renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
 	SDL_RenderPresent(this->renderer);
@@ -80,7 +89,7 @@ void Game::OnClick(SDL_Event* event) {
 	int y = std::floor(event->button.y/60);
 
 
-
+	/*
 	if (event->button.button == SDL_BUTTON_LEFT) {
 		if (event->button.state == SDL_PRESSED) {
 			Figure* figureThere = Figure::getFigureOnPosition(x, y);
@@ -96,6 +105,7 @@ void Game::OnClick(SDL_Event* event) {
 		}
 
 	}
+	*/
 }
 
 void Game::EventHandling() {
@@ -113,8 +123,7 @@ void Game::EventHandling() {
 
 void Game::generateFigures() {
 	for (int x = 0; x < 10; x++) {
-		Figure* newFigure = new Figure(x, 2, FIGURE_TYPE_KING, 255);
-		Figure::figures.push_back(newFigure);
+		this->board[x][2] = new King(this, true);
 	}
 }
 
