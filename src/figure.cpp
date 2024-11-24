@@ -1,5 +1,6 @@
 #include "game.h"
 #include "figure.h"
+#include "globals.h"
 #include <SDL2/SDL.h>
 #include <vector>
 #include <math.h>
@@ -19,10 +20,10 @@ void King::render(SDL_Renderer* renderer, int x, int y) {
 	}
 	SDL_SetRenderDrawColor(renderer, rgbColor, rgbColor, rgbColor, 255);
 	SDL_Rect rect = {
-		.x = x*60,
-		.y = y*60,
-		.w = 60,
-		.h = 60
+		.x = x,
+		.y = y,
+		.w = FIGURE_SIZE,
+		.h = FIGURE_SIZE
 	};
 	SDL_RenderFillRect(renderer, &rect);
 }

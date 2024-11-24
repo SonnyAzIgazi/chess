@@ -1,5 +1,6 @@
 #include "game.h"
 #include "figure.h"
+#include "globals.h"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_rect.h>
@@ -50,38 +51,31 @@ void Game::Render() {
 
 	int counter = 0;
 
-	for (int x = 0; x < 12; x++) {
-		for (int y = 0; y < 12; y++) {
+	int mX, mY;
+	SDL_GetMouseState(&mX, &mY);
+
+	for (int x = 0; x < BOARD_SIZE; x++) {
+		for (int y = 0; y < BOARD_SIZE; y++) {
 			if (this->board[x][y] != nullptr) {
-				this->board[x][y]->render(this->renderer, x*60, y*60);
+				if (this->board[x][y] == this->inHand) {
+					this->board[x][y]->render(this->renderer, mX - FIGURE_SIZE / 2, mY - FIGURE_SIZE / 2);
+				} else {
+					this->board[x][y]->render(this->renderer, x*FIGURE_SIZE, y*FIGURE_SIZE);
+				}
 			}
 		}
 	}
-		/*
-		if (this->inHand == figure) {
-			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 100);
-			SDL_RenderFillRect(this->renderer, figure->rect);
-
-			int mX, mY;
-			SDL_GetMouseState(&mX, &mY);
-
-			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 200);
-			SDL_Rect rect = {
-				.x = mX-30,
-				.y = mY-30,
-				.w = 60,
-				.h = 60
-			};
-			SDL_RenderFillRect(this->renderer, &rect);
-
-		} else {
-			SDL_SetRenderDrawColor(this->renderer, figure->color, figure->color, figure->color, 255);
-			SDL_RenderFillRect(this->renderer, figure->rect);
-		}
-		*/
 
 	SDL_SetRenderDrawColor(this->renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
 	SDL_RenderPresent(this->renderer);
+}
+
+Figure* Game::getFigureOnPosition(int x, int y) {
+	if (x >= BOARD_SIZE || x < 0 || y >= BOARD_SIZE || y < 0) {
+		return nullptr;
+	}
+
+	return this->board[x][y];
 }
 
 void Game::OnClick(SDL_Event* event) {
@@ -89,23 +83,23 @@ void Game::OnClick(SDL_Event* event) {
 	int y = std::floor(event->button.y/60);
 
 
-	/*
 	if (event->button.button == SDL_BUTTON_LEFT) {
 		if (event->button.state == SDL_PRESSED) {
-			Figure* figureThere = Figure::getFigureOnPosition(x, y);
+			Figure* clickedFigure = this->board[x][y];
 
-			if (figureThere != nullptr) {
-				inHand = figureThere;
+			if (clickedFigure != nullptr) {
+				inHand = clickedFigure;
 			}
 		} else {
+			/*
 			if (inHand != nullptr) {
 				inHand->move(x, y);
 				inHand = nullptr;
 			}
+			*/
 		}
 
 	}
-	*/
 }
 
 void Game::EventHandling() {
