@@ -13,6 +13,8 @@ class Figure {
 		//void move(int x, int y);
 		//virtual bool isValidMove(int x, int y);
         virtual void render(SDL_Renderer* renderer, int x, int y) = 0;
+
+        virtual bool canMove(int currentX, int currentY, int nextX, int nextY);
     protected:
         Game* game;
 		bool color;

@@ -11,6 +11,10 @@ Figure::Figure(Game* game, bool color) {
 	this->color = color;
 }
 
+bool Figure::canMove(int currentX, int currentY, int nextX, int nextY) {
+	return true;
+}
+
 void King::render(SDL_Renderer* renderer, int x, int y) {
 	Uint8 rgbColor;
 	if (this->color) {

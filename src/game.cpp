@@ -78,6 +78,16 @@ Figure* Game::getFigureOnPosition(int x, int y) {
 	return this->board[x][y];
 }
 
+std::tuple<int, int> Game::getFigureCoordinate(Figure* figure) {
+	for (int x = 0; x < BOARD_SIZE; x++) {
+		for (int y = 0; y < BOARD_SIZE; y++) {
+			if (this->board[x][y] == figure) {
+				return {x, y};
+			}
+		}
+	}
+}
+
 void Game::OnClick(SDL_Event* event) {
 	int x = std::floor(event->button.x/60);
 	int y = std::floor(event->button.y/60);
@@ -91,12 +101,14 @@ void Game::OnClick(SDL_Event* event) {
 				inHand = clickedFigure;
 			}
 		} else {
-			/*
 			if (inHand != nullptr) {
-				inHand->move(x, y);
+				std::tuple<int, int> coords = this->getFigureCoordinate(inHand);
+				if (inHand->canMove(std::get<0>(coords), std::get<1>(coords), x, y)) {
+					this->board[x][y] = this->board[std::get<0>(coords)][std::get<1>(coords)];
+					this->board[std::get<0>(coords)][std::get<1>(coords)] = nullptr;
+				}
 				inHand = nullptr;
 			}
-			*/
 		}
 
 	}
