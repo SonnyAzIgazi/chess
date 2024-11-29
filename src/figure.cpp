@@ -1,68 +1,50 @@
 #include "game.h"
 #include "figure.h"
-#include "globals.h"
 #include <SDL2/SDL.h>
-#include <vector>
+#include <SDL2/SDL_render.h>
 #include <math.h>
-#include <algorithm>
 
 Figure::Figure(Game* game, bool color) {
     this->game = game;
 	this->color = color;
 }
 
+void Figure::init() {
+	this->renderTexture();
+}
+
+SDL_Texture* Figure::getTexture() {
+	return this->texture;
+}
+
 bool Figure::canMove(int currentX, int currentY, int nextX, int nextY) {
 	return true;
 }
 
-void King::render(SDL_Renderer* renderer, int x, int y) {
-	Uint8 rgbColor;
-	if (this->color) {
-		rgbColor = 255;
-	} else {
-		rgbColor = 0;
-	}
-	SDL_SetRenderDrawColor(renderer, rgbColor, rgbColor, rgbColor, 255);
-	SDL_Rect rect = {
-		.x = x,
-		.y = y,
-		.w = FIGURE_SIZE,
-		.h = FIGURE_SIZE
-	};
-	SDL_RenderFillRect(renderer, &rect);
-}
+void King::renderTexture() {
+	SDL_Renderer* renderer = this->game->getRenderer();
+	bool boolArray[8][8] = {
+        {1, 0, 1, 0, 1, 0, 1, 0},
+        {0, 1, 0, 1, 0, 1, 0, 1},
+        {1, 0, 1, 0, 1, 0, 1, 0},
+        {0, 1, 0, 1, 0, 1, 0, 1},
+        {1, 0, 1, 0, 1, 0, 1, 0},
+        {0, 1, 0, 1, 0, 1, 0, 1},
+        {1, 0, 1, 0, 1, 0, 1, 0},
+        {0, 1, 0, 1, 0, 1, 0, 1}
+    };
 
-/*
-void Figure::move(int x, int y) {
-	if (canMoveThere(x, y)) {
-		Figure* onThatField = getFigureOnPosition(x, y);
-		if (onThatField != nullptr) {
-			figures.erase(std::remove(figures.begin(), figures.end(), onThatField), figures.end());
-			delete onThatField;
-		}
-		this->rect->x = x * 60;
-		this->rect->y = y * 60;
-	}
-}
+    Uint32 pixels[8][8];
+    for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 8; y++) {
+            if (boolArray[x][y]) {
+                pixels[x][y] = 0xFFFFFFAA; // White pixel (RGBA: 255, 255, 255, 255)
+            } else {
+                pixels[x][y] = 0x000000AA; // Black pixel (RGBA: 0, 0, 0, 255)
+            }
+        }
+    }
 
-bool Figure::canMoveThere(int x, int y) {
-	if (this->figureType == FIGURE_TYPE_PAWN) {
-		int ownX = this->rect->x/60;
-		int ownY = this->rect->y/60;
-
-		Figure* figureThere = getFigureOnPosition(x, y);
-		if (figureThere != nullptr) {
-			if (figureThere->color != this->color) {
-				if (std::abs(ownX - x) == 1 && ownY + 1 == y) {
-					return true;
-				}
-			}
-		} else if (ownX == x && ownY + 1 == y) {
-			return true;
-		}
-	} else {
-		return true;
-	}
-	return false;
+	this->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 8, 8);
+    SDL_UpdateTexture(this->texture, nullptr, pixels, 8 * sizeof(Uint32));
 }
-*/

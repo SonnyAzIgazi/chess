@@ -1,7 +1,5 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-//#include <SDL2/SDL_scancode.h>
 #include <tuple>
 #include <vector>
 
@@ -16,6 +14,7 @@ public:
 
 	Figure* getFigureOnPosition(int x, int y);
 	std::tuple<int, int> getFigureCoordinate(Figure* figure);
+	SDL_Renderer* getRenderer();
 
 private:
 	SDL_Window* window;

@@ -37,6 +37,10 @@ Game::Game() {
 	SDL_Quit();
 }
 
+SDL_Renderer* Game::getRenderer() {
+	return this->renderer;
+}
+
 void Game::Render() {
 	SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(this->renderer);
@@ -57,11 +61,17 @@ void Game::Render() {
 	for (int x = 0; x < BOARD_SIZE; x++) {
 		for (int y = 0; y < BOARD_SIZE; y++) {
 			if (this->board[x][y] != nullptr) {
+				SDL_Rect rect;
+				rect.w = FIGURE_SIZE;
+				rect.h = FIGURE_SIZE;
 				if (this->board[x][y] == this->inHand) {
-					this->board[x][y]->render(this->renderer, mX - FIGURE_SIZE / 2, mY - FIGURE_SIZE / 2);
+					rect.x = mX - FIGURE_SIZE / 2;
+					rect.y = mY - FIGURE_SIZE / 2;
 				} else {
-					this->board[x][y]->render(this->renderer, x*FIGURE_SIZE, y*FIGURE_SIZE);
+					rect.x = x * FIGURE_SIZE;
+					rect.y = y * FIGURE_SIZE;
 				}
+				SDL_RenderCopy(this->renderer, this->board[x][y]->getTexture(), nullptr, &rect);
 			}
 		}
 	}
@@ -130,6 +140,7 @@ void Game::EventHandling() {
 void Game::generateFigures() {
 	for (int x = 0; x < 10; x++) {
 		this->board[x][2] = new King(this, true);
+		this->board[x][2]->init();
 	}
 }
 

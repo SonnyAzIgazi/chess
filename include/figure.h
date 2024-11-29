@@ -1,7 +1,5 @@
 #pragma once
-//#include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL.h>
-#include <vector>
 
 class Game;
 
@@ -10,14 +8,17 @@ class Figure {
         Figure(Game* game, bool color);
         virtual ~Figure() {};
 
-		//void move(int x, int y);
-		//virtual bool isValidMove(int x, int y);
-        virtual void render(SDL_Renderer* renderer, int x, int y) = 0;
-
         virtual bool canMove(int currentX, int currentY, int nextX, int nextY);
+
+        void init();
+
+        SDL_Texture* getTexture();
     protected:
         Game* game;
 		bool color;
+		SDL_Texture* texture;
+
+		virtual void renderTexture() = 0;
 
     private:
 };
@@ -27,5 +28,5 @@ class King : public Figure {
         King(Game* game, bool color)
             : Figure(game, color) {}
 
-        void render(SDL_Renderer* renderer, int x, int y) override;
+        void renderTexture() override;
 };
