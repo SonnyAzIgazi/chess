@@ -12,11 +12,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 
-#define WINDOW_SIZE 600
-
 Game::Game() {
 	if (SDL_Init(SDL_INIT_VIDEO) == 0) {
-		if (SDL_CreateWindowAndRenderer(WINDOW_SIZE+1, WINDOW_SIZE+1, 0, &window, &this->renderer) == 0) {
+		if (SDL_CreateWindowAndRenderer(900, 900, 0, &window, &this->renderer) == 0) {
 			SDL_SetRenderDrawBlendMode(this->renderer, SDL_BLENDMODE_BLEND);
 
 			this->board.resize(12, std::vector<Figure*>(12, nullptr));
@@ -46,16 +44,8 @@ SDL_Renderer* Game::getRenderer() {
 void Game::Render() {
 	SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(this->renderer);
-	SDL_SetRenderDrawColor(this->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-	for (int x = 0; x <= 10; x++) {
-		SDL_RenderDrawLine(this->renderer, x*WINDOW_SIZE/10, 0, x*WINDOW_SIZE/10, WINDOW_SIZE);
-	}
-	for (int y = 0; y <= 10; y++) {
-		SDL_RenderDrawLine(this->renderer, 0, y*WINDOW_SIZE/10, WINDOW_SIZE, y*WINDOW_SIZE/10);
-	}
 
-
-	int counter = 0;
+	this->renderMap();
 
 	int mX, mY;
 	SDL_GetMouseState(&mX, &mY);
@@ -80,6 +70,24 @@ void Game::Render() {
 
 	SDL_SetRenderDrawColor(this->renderer, 255, 0, 255, SDL_ALPHA_OPAQUE);
 	SDL_RenderPresent(this->renderer);
+}
+
+void Game::renderMap() {
+    SDL_Rect rect;
+    rect.w = FIGURE_SIZE;
+    rect.h = FIGURE_SIZE;
+    for (int x = 0; x < BOARD_SIZE; x++) {
+        for (int y = 0; y < BOARD_SIZE; y++) {
+            rect.x = x * FIGURE_SIZE;
+            rect.y = y * FIGURE_SIZE;
+            if ((x+y) % 2 == 0) {
+                SDL_SetRenderDrawColor(this->renderer, 190, 190, 100, SDL_ALPHA_OPAQUE);
+            } else {
+                SDL_SetRenderDrawColor(this->renderer, 240, 240, 206, SDL_ALPHA_OPAQUE);
+            }
+            SDL_RenderFillRect(this->renderer, &rect);
+        }
+    }
 }
 
 Figure* Game::getFigureOnPosition(int x, int y) {
@@ -115,6 +123,10 @@ void Game::OnClick(SDL_Event* event) {
 		} else {
 			if (inHand != nullptr) {
 				std::tuple<int, int> coords = this->getFigureCoordinate(inHand);
+				if (std::get<0>(coords) == x && std::get<1>(coords) == y) {
+				    inHand = nullptr;
+				    return;
+				}
 				if (inHand->canMove(std::get<0>(coords), std::get<1>(coords), x, y)) {
 					this->board[x][y] = this->board[std::get<0>(coords)][std::get<1>(coords)];
 					this->board[std::get<0>(coords)][std::get<1>(coords)] = nullptr;
@@ -140,9 +152,9 @@ void Game::EventHandling() {
 }
 
 void Game::generateFigures() {
-	for (int x = 0; x < 10; x++) {
-		this->board[x][2] = new King(this, (x % 2 == 0));
-		this->board[x][2]->init();
+	for (int x = 0; x < BOARD_SIZE; x++) {
+		this->board[x][BOARD_SIZE-2] = new Pawn(this, true);
+		this->board[x][BOARD_SIZE-2]->init();
 	}
 }
 

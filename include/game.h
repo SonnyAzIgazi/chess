@@ -26,6 +26,8 @@ private:
 	Figure* inHand = nullptr;
 
 	void Render();
+	void renderMap();
+
 	void EventHandling();
 	void KeyboardHandling(SDL_Event* event);
 	void OnClick(SDL_Event* event);

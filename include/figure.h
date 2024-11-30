@@ -30,3 +30,11 @@ class King : public Figure {
 
         void renderTexture() override;
 };
+
+class Pawn : public Figure {
+    public:
+        Pawn(Game* game, bool color)
+            : Figure(game, color) {}
+
+        void renderTexture() override;
+};
