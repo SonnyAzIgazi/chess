@@ -22,6 +22,8 @@ Game::Game() {
 			this->board.resize(12, std::vector<Figure*>(12, nullptr));
 			this->generateFigures();
 
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
 			while (running) {
 				this->Render();
 				this->EventHandling();
@@ -139,7 +141,7 @@ void Game::EventHandling() {
 
 void Game::generateFigures() {
 	for (int x = 0; x < 10; x++) {
-		this->board[x][2] = new King(this, true);
+		this->board[x][2] = new King(this, (x % 2 == 0));
 		this->board[x][2]->init();
 	}
 }
